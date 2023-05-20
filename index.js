@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
-var Feed = require('rss-to-json');
+//var Feed = require('rss-to-json');
+const { parse } = require('rss-to-json');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -12,12 +13,16 @@ app.set('port', (process.env.PORT || 5000));
 
 app.get('/', function(req, res, next) {
   if (req.query.feedURL) {
-    Feed.load(req.query.feedURL, function(err, rss){
-      if (err) {
-        res.send({ 'error': 'An error has occurred' });
-      } else {
-        res.send(rss);
-      }
+    // Feed.load(req.query.feedURL, function(err, rss){
+    //   if (err) {
+    //     res.send({ 'error': 'An error has occurred' });
+    //   } else {
+    //     res.send(rss);
+    //   }
+    // });
+    parse(req.query.feedURL).then(rss => {
+      console.log(JSON.stringify(rss, null, 3));
+      res.send(rss);
     });
   } else {
     res.status(400).send({ 'error': 'feedURL is required' });
